@@ -1,0 +1,24 @@
+meta {
+  name: PUT - ID - PRODUCTS
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:5012/api/products/1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "teste",
+    "description": "teste",
+    "price": 20
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
