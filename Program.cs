@@ -66,7 +66,14 @@ using (var scope = app.Services.CreateScope())
 
 
 // ---------------------------------------------------------
-// 🚀 4) Pipeline
+// 🌐 4) Required for Railway (PORT binding)
+// ---------------------------------------------------------
+var railwayPort = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{railwayPort}");
+
+
+// ---------------------------------------------------------
+// 🚀 5) Pipeline
 // ---------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
