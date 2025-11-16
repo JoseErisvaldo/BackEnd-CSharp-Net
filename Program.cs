@@ -43,6 +43,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 
@@ -68,7 +71,7 @@ using (var scope = app.Services.CreateScope())
 // ---------------------------------------------------------
 // 🌐 4) Required for Railway (PORT binding)
 // ---------------------------------------------------------
-var railwayPort = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var railwayPort = Environment.GetEnvironmentVariable("PORT") ?? "5012";
 app.Urls.Add($"http://0.0.0.0:{railwayPort}");
 
 
