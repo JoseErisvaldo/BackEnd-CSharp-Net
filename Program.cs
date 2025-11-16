@@ -7,30 +7,29 @@ using MinhaApi.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // ---------------------------------------------------------
-// 🌐 1) Definir porta para a Railway
+// 🌐 1) Configurar Kestrel para a porta da Railway
 // ---------------------------------------------------------
 builder.WebHost.ConfigureKestrel(options =>
 {
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-    options.ListenAnyIP(int.Parse(port));
+    var runtimePort = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    options.ListenAnyIP(int.Parse(runtimePort));
 });
 
 // ---------------------------------------------------------
-// 🔌 2) Obter connection string (local → Railway)
+// 🔌 2) Obter connection string (local ou Railway)
 // ---------------------------------------------------------
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Se não existir no appsettings.json, monta usando variáveis da Railway
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     var host = Environment.GetEnvironmentVariable("MYSQLHOST") ?? "localhost";
-    var port = Environment.GetEnvironmentVariable("MYSQLPORT") ?? "3306";
-    var user = Environment.GetEnvironmentVariable("MYSQLUSER") ?? "appuser";
-    var pwd = Environment.GetEnvironmentVariable("MYSQLPASSWORD") ?? "appuser123";
+    var mysqlPort = Environment.GetEnvironmentVariable("MYSQLPORT") ?? "3306";
+    var user = Environment.GetEnvironmentVariable("MYSQLUSER") ?? "root";
+    var pwd = Environment.GetEnvironmentVariable("MYSQLPASSWORD") ?? "";
     var db = Environment.GetEnvironmentVariable("MYSQLDATABASE") ?? "produtos_db";
 
     connectionString =
-        $"Server={host};Port={port};Database={db};Uid={user};Pwd={pwd};AllowPublicKeyRetrieval=True;SslMode=None";
+        $"Server={host};Port={mysqlPort};Database={db};Uid={user};Pwd={pwd};AllowPublicKeyRetrieval=True;SslMode=None";
 }
 
 // Registrar DbContext
@@ -39,7 +38,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 // ---------------------------------------------------------
-// 🧱 3) Serviços, Repo, AutoMapper, etc
+// 🧱 3) Services, Repositories, AutoMapper, Swagger
 // ---------------------------------------------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
