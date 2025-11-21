@@ -1,11 +1,11 @@
-
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MinhaApi.DTOs;
 using MinhaApi.Services;
 
 namespace MinhaApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/establishments")]
 public class EstablishmentsController : ControllerBase

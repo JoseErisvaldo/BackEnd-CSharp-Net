@@ -6,6 +6,9 @@ obj/
 .vs/
 .vscode/
 
+# env
+.env
+
 # Dotnet tools
 *.user
 *.suo

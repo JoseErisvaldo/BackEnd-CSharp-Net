@@ -3,6 +3,14 @@ using MinhaApi.Data;
 using AutoMapper;
 using MinhaApi.Services;
 using MinhaApi.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using DotNetEnv;
+
+// 🔐 Carrega variáveis do .env
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,16 +25,15 @@ var db = Environment.GetEnvironmentVariable("MYSQL_DATABASE");
 
 string connectionString;
 
-if (!string.IsNullOrEmpty(host))
+if (!string.IsNullOrWhiteSpace(host))
 {
-    // ✔ Railway
     connectionString =
         $"Server={host};Port={port};Database={db};User={user};Password={pass};SslMode=None;";
 }
 else
 {
-    // ✔ Local (via appsettings.json)
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new Exception("Connection string DefaultConnection não encontrada.");
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -34,11 +41,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 // ---------------------------------------------------------
-// 🧱 2) Services, Repos, AutoMapper, Swagger
+// 🧱 2) Services, Repos, AutoMapper
 // ---------------------------------------------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -47,13 +53,79 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEstablishmentRepository, EstablishmentsRepository>();
 builder.Services.AddScoped<IEstablishmentsService, EstablishmentsService>();
+builder.Services.AddScoped<AuthService>();
+
+
+
+// ---------------------------------------------------------
+// 🔐 3) JWT 100% seguro via ENV
+// ---------------------------------------------------------
+var secret = Environment.GetEnvironmentVariable("JWT_SECRET")!;
+var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!;
+var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")!;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+    };
+});
+
+builder.Services.AddAuthorization();
+
+
+// ---------------------------------------------------------
+// 📚 4) Swagger com JWT
+// ---------------------------------------------------------
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MinhaApi", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Digite: Bearer {seu_token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 
 var app = builder.Build();
 
 
 // ---------------------------------------------------------
-// 🗄️ 3) Auto Migrate
+// 🗄️ 5) Auto Migrate
 // ---------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
@@ -71,14 +143,14 @@ using (var scope = app.Services.CreateScope())
 
 
 // ---------------------------------------------------------
-// 🌐 4) Required for Railway (PORT binding)
+// 🌐 6) Railway PORT binding
 // ---------------------------------------------------------
 var railwayPort = Environment.GetEnvironmentVariable("PORT") ?? "5012";
 app.Urls.Add($"http://0.0.0.0:{railwayPort}");
 
 
 // ---------------------------------------------------------
-// 🚀 5) Pipeline
+// 🚀 7) Pipeline
 // ---------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
@@ -86,5 +158,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
