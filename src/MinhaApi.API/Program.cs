@@ -28,7 +28,7 @@ string connectionString;
 if (!string.IsNullOrWhiteSpace(host))
 {
     connectionString =
-        $"Server={host};Port={port};Database={db};User={user};Password={pass};SslMode=None;";
+        $"Server={host};Port={port};Database={db};User={user};Password={pass};SslMode=None;AllowPublicKeyRetrieval=True;";
 }
 else
 {
