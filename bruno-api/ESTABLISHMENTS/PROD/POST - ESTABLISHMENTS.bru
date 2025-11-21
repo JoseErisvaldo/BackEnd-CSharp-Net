@@ -1,0 +1,23 @@
+meta {
+  name: POST - ESTABLISHMENTS
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://net-inicio-praticando-production.up.railway.app/api/establishments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Estabelecimento do José",
+    "description": "teste"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

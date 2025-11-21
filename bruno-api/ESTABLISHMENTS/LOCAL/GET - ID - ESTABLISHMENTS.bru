@@ -1,19 +1,13 @@
 meta {
-  name: PUT - ID - ESTABLISHMENTS
+  name: GET - ID - ESTABLISHMENTS
   type: http
   seq: 6
 }
 
-put {
+get {
   url: http://localhost:5012/api/establishments/08de2906-895c-4996-83ee-107dc848247b
-  body: json
+  body: none
   auth: inherit
-}
-
-body:json {
-  {
-      "description": "Estabelecimento ideal para voce"
-  }
 }
 
 settings {

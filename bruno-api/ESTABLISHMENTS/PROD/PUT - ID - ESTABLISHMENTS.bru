@@ -1,0 +1,22 @@
+meta {
+  name: PUT - ID - ESTABLISHMENTS
+  type: http
+  seq: 4
+}
+
+put {
+  url: https://net-inicio-praticando-production.up.railway.app/api/establishments/08de2909-f75c-4aee-879d-be8f1b6579cf
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "description": "Estabelecimento ideal para voce!!!"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
