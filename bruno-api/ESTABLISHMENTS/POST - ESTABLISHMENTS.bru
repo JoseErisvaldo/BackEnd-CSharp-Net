@@ -1,0 +1,23 @@
+meta {
+  name: POST - ESTABLISHMENTS
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:5012/api/establishments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Estabelecimento do José",
+    "description": "teste"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
