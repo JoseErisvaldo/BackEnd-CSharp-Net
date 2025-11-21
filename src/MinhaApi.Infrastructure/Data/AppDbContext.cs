@@ -9,5 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Establishments> Establishments { get; set; } = null!;
+
 
 }
