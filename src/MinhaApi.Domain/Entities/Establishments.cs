@@ -6,4 +6,6 @@ public class Establishments
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<Restaurants> Restaurants { get; set; } = new List<Restaurants>();
+
 }
