@@ -1,7 +1,10 @@
 using AutoMapper;
-using MinhaApi.Entities;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.DTOs.Users;
+using MinhaApi.Domain.Entities;
+using MinhaApi.Infrastructure.Repositories.Interfaces;
 
-namespace MinhaApi.Services;
+namespace MinhaApi.Application.Services;
 
 public class UserService : IUserService
 {
@@ -14,38 +17,39 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public Task<List<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
     {
-        return _repo.GetUsersAsync();
+        var users = await _repo.GetAllAsync();
+        return _mapper.Map<IEnumerable<UserResponseDto>>(users);
     }
 
-    public Task<User?> GetUserByIdAsync(Guid id)
+    public async Task<UserResponseDto?> GetByIdAsync(Guid id)
     {
-        return _repo.GetUserByIdAsync(id);
+        var user = await _repo.GetByIdAsync(id);
+        if (user is null) return null;
+        return _mapper.Map<UserResponseDto>(user);
     }
 
-    public async Task<User> Create(UserDto dto)
+    public async Task<UserResponseDto> CreateAsync(CreateUserDto dto)
     {
-        var user = _mapper.Map<User>(dto);
-        await _repo.AddUserAsync(user);
-        return user;
+        var entity = _mapper.Map<User>(dto);
+        await _repo.AddAsync(entity);
+        return _mapper.Map<UserResponseDto>(entity);
     }
 
-    public async Task<User?> Update(Guid id, UserDto dto)
+    public async Task<UserResponseDto?> UpdateAsync(Guid id, UpdateUserDto dto)
     {
-        var user = await _repo.GetUserByIdAsync(id);
-        if (user == null) return null;
-
+        var user = await _repo.GetByIdAsync(id);
+        if (user is null) return null;
         _mapper.Map(dto, user);
         await _repo.UpdateAsync(user);
-        return user;
+        return _mapper.Map<UserResponseDto>(user);
     }
 
-    public async Task<bool> Delete(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var user = await _repo.GetUserByIdAsync(id);
-        if (user == null) return false;
-
+        var user = await _repo.GetByIdAsync(id);
+        if (user is null) return false;
         await _repo.DeleteAsync(user);
         return true;
     }

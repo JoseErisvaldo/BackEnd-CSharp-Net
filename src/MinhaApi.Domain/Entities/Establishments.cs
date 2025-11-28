@@ -1,9 +1,9 @@
-namespace MinhaApi.Entities;
+namespace MinhaApi.Domain.Entities;
 
-public class Establishments
+public class Establishment
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = null!;
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

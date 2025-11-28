@@ -1,38 +1,56 @@
 using AutoMapper;
-using MinhaApi.DTOs;
-using MinhaApi.Entities;
-using MinhaApi.Repositories;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.DTOs.Products;
+using MinhaApi.Domain.Entities;
+using MinhaApi.Infrastructure.Repositories.Interfaces;
 
-namespace MinhaApi.Services;
+namespace MinhaApi.Application.Services;
 
 public class ProductService : IProductService
 {
-    private readonly IProductRepository _repo;
+    private readonly IProductRepository _repository;
     private readonly IMapper _mapper;
 
-    public ProductService(IProductRepository repo, IMapper mapper)
+    public ProductService(IProductRepository repository, IMapper mapper)
     {
-        _repo = repo;
+        _repository = repository;
         _mapper = mapper;
     }
 
-    public Task<List<Product>> GetAll() => _repo.GetAllAsync();
-    public Task<Product?> GetById(int id) => _repo.GetByIdAsync(id);
-
-    public async Task<Product> Create(ProductDto dto)
+    public async Task<IEnumerable<ProductResponseDto>> GetAll()
     {
-        var product = _mapper.Map<Product>(dto);
-        return await _repo.AddAsync(product);
+        var products = await _repository.GetAll();
+        return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
     }
 
-    public async Task<Product?> Update(int id, ProductDto dto)
+    public async Task<ProductResponseDto?> GetById(int id)
     {
-        var product = await _repo.GetByIdAsync(id);
+        var product = await _repository.GetById(id);
         if (product == null) return null;
-
-        _mapper.Map(dto, product);
-        return await _repo.UpdateAsync(product);
+        return _mapper.Map<ProductResponseDto>(product);
     }
 
-    public Task<bool> Delete(int id) => _repo.DeleteAsync(id);
+    public async Task<ProductResponseDto> Create(CreateProductDto dto)
+    {
+        var entity = _mapper.Map<Product>(dto);
+        await _repository.Add(entity);
+        return _mapper.Map<ProductResponseDto>(entity);
+    }
+
+    public async Task<ProductResponseDto?> Update(int id, UpdateProductDto dto)
+    {
+        var product = await _repository.GetById(id);
+        if (product == null) return null;
+        _mapper.Map(dto, product);
+        await _repository.Update(product);
+        return _mapper.Map<ProductResponseDto>(product);
+    }
+
+    public async Task<bool> Delete(int id)
+    {
+        var product = await _repository.GetById(id);
+        if (product == null) return false;
+        await _repository.Delete(product);
+        return true;
+    }
 }

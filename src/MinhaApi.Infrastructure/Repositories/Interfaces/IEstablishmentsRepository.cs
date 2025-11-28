@@ -1,14 +1,12 @@
+using MinhaApi.Domain.Entities;
 
-
-using MinhaApi.Entities;
-
-namespace MinhaApi.Repositories;
+namespace MinhaApi.Infrastructure.Repositories.Interfaces;
 
 public interface IEstablishmentRepository
 {
-    Task<List<Establishments>> GetAllAsync();
-    Task<Establishments?> GetByIdAsync(Guid id);
-    Task<Establishments> AddAsync(Establishments establishments);
-    Task<Establishments> UpdateAsync(Establishments establishments);
-    Task<bool> DeleteAsync(Guid id);
+    Task<List<Establishment>> GetAllAsync();
+    Task<Establishment?> GetByIdAsync(Guid id);
+    Task AddAsync(Establishment establishment);
+    Task UpdateAsync(Establishment establishment);
+    Task DeleteAsync(Establishment establishment);
 }

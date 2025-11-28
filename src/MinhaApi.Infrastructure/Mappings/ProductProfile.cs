@@ -1,13 +1,15 @@
 using AutoMapper;
-using MinhaApi.DTOs;
-using MinhaApi.Entities;
+using MinhaApi.Domain.Entities;
+using MinhaApi.DTOs.Products;
 
-namespace MinhaApi.Mappings;
+namespace MinhaApi.Infrastructure.Mappings;
 
 public class ProductProfile : Profile
 {
     public ProductProfile()
     {
-        CreateMap<ProductDto, Product>();
+        CreateMap<Product, ProductResponseDto>();
+        CreateMap<CreateProductDto, Product>();
+        CreateMap<UpdateProductDto, Product>();
     }
 }

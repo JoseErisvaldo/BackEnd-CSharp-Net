@@ -1,10 +1,8 @@
 namespace MinhaApi.DTOs.Users;
 
-public record UserResponseDto(
-    Guid Id,
+public record CreateUserDto(
     string Name,
     string Email,
     string? Whatsapp,
-    string Role,
-    DateTime CreatedAt
+    string Password
 );

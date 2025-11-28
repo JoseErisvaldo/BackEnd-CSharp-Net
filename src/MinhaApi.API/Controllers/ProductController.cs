@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using MinhaApi.Services;
-using MinhaApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.DTOs.Products;
 
-namespace MinhaApi.Controllers;
+namespace MinhaApi.API.Controllers;
 
 [Authorize]
 [ApiController]
@@ -18,37 +18,50 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() =>
-        Ok(await _service.GetAll());
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetAll()
+    {
+        var products = await _service.GetAll();
+        return Ok(products);
+    }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProductResponseDto>> GetById(int id)
     {
         var product = await _service.GetById(id);
-        if (product == null) return NotFound();
+        if (product is null) return NotFound(new { message = "Produto não encontrado" });
         return Ok(product);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ProductDto dto)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ProductResponseDto>> Create([FromBody] CreateProductDto dto)
     {
         var product = await _service.Create(dto);
-        return Created("", product);
+        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ProductDto dto)
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ProductResponseDto>> Update(int id, [FromBody] UpdateProductDto dto)
     {
         var product = await _service.Update(id, dto);
-        if (product == null) return NotFound();
+        if (product is null) return NotFound(new { message = "Produto não encontrado" });
         return Ok(product);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        var ok = await _service.Delete(id);
-        if (!ok) return NotFound();
+        var deleted = await _service.Delete(id);
+        if (!deleted) return NotFound(new { message = "Produto não encontrado" });
         return NoContent();
     }
 }

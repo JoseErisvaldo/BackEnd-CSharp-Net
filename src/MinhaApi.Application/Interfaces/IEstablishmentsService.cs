@@ -1,14 +1,12 @@
-using MinhaApi.DTOs;
-using MinhaApi.Entities;
+using MinhaApi.DTOs.Establishments;
 
-namespace MinhaApi.Services;
+namespace MinhaApi.Application.Interfaces;
 
-public interface IEstablishmentsService
+public interface IEstablishmentService
 {
-    Task<List<Establishments>> GetAll();
-    Task<Establishments?> GetById(Guid id);
-    Task<Establishments> Create(CreateEstablishmentDto dto);
-    Task<Establishments?> Update(Guid id, UpdateEstablishmentDto dto);
-    Task<bool> Delete(Guid id);
+    Task<IEnumerable<EstablishmentResponseDto>> GetAllAsync();
+    Task<EstablishmentResponseDto?> GetByIdAsync(Guid id);
+    Task<EstablishmentResponseDto> CreateAsync(CreateEstablishmentDto dto);
+    Task<EstablishmentResponseDto?> UpdateAsync(Guid id, UpdateEstablishmentDto dto);
+    Task<bool> DeleteAsync(Guid id);
 }
-

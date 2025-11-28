@@ -1,4 +1,4 @@
-namespace MinhaApi.Entities;
+namespace MinhaApi.Domain.Entities;
 
 public class User
 {

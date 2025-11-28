@@ -1,12 +1,12 @@
-using MinhaApi.Entities;
+using MinhaApi.Domain.Entities;
+
+namespace MinhaApi.Infrastructure.Repositories.Interfaces;
 
 public interface IUserRepository
 {
-    Task<List<User>> GetUsersAsync();
-    Task<User?> GetUserByIdAsync(Guid id);
-    Task AddUserAsync(User user);
-
-    // Novos métodos
-    Task<User> UpdateAsync(User user);
+    Task<IEnumerable<User>> GetAllAsync();
+    Task<User?> GetByIdAsync(Guid id);
+    Task AddAsync(User user);
+    Task UpdateAsync(User user);
     Task DeleteAsync(User user);
 }

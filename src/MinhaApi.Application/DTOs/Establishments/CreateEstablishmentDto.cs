@@ -1,7 +1,8 @@
-namespace MinhaApi.DTOs;
+using System.ComponentModel.DataAnnotations;
 
-public class CreateEstablishmentDto
-{
-    public required string Name { get; set; }
-    public string? Description { get; set; }
-}
+namespace MinhaApi.DTOs.Establishments;
+
+public record CreateEstablishmentDto(
+    [property: Required] string Name,
+    string? Description
+);

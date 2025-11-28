@@ -1,12 +1,12 @@
-using MinhaApi.Entities;
+using MinhaApi.Domain.Entities;
 
-namespace MinhaApi.Repositories;
+namespace MinhaApi.Infrastructure.Repositories.Interfaces;
 
 public interface IProductRepository
 {
-    Task<List<Product>> GetAllAsync();
-    Task<Product?> GetByIdAsync(int id);
-    Task<Product> AddAsync(Product product);
-    Task<Product> UpdateAsync(Product product);
-    Task<bool> DeleteAsync(int id);
+    Task<IEnumerable<Product>> GetAll();
+    Task<Product?> GetById(int id);
+    Task Add(Product product);
+    Task Update(Product product);
+    Task Delete(Product product);
 }

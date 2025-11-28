@@ -1,54 +1,67 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MinhaApi.DTOs;
-using MinhaApi.Services;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.DTOs.Establishments;
 
-namespace MinhaApi.Controllers;
+namespace MinhaApi.API.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/establishments")]
 public class EstablishmentsController : ControllerBase
 {
-    private readonly IEstablishmentsService _service;
+    private readonly IEstablishmentService _service;
 
-    public EstablishmentsController(IEstablishmentsService service)
+    public EstablishmentsController(IEstablishmentService service)
     {
         _service = service;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() =>
-        Ok(await _service.GetAll());
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<EstablishmentResponseDto>>> GetAll()
     {
-        var establishments = await _service.GetById(id);
-        if (establishments == null) return NotFound();
-        return Ok(establishments);
+        var items = await _service.GetAllAsync();
+        return Ok(items);
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<EstablishmentResponseDto>> GetById(Guid id)
+    {
+        var item = await _service.GetByIdAsync(id);
+        if (item is null) return NotFound();
+        return Ok(item);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateEstablishmentDto dto)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<EstablishmentResponseDto>> Create([FromBody] CreateEstablishmentDto dto)
     {
-        var establishments = await _service.Create(dto);
-        return Created("", establishments);
+        var created = await _service.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateEstablishmentDto dto)
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<EstablishmentResponseDto>> Update(Guid id, [FromBody] UpdateEstablishmentDto dto)
     {
-        var establishments = await _service.Update(id, dto);
-        if (establishments == null) return NotFound();
-        return Ok(establishments);
+        var updated = await _service.UpdateAsync(id, dto);
+        if (updated is null) return NotFound();
+        return Ok(updated);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var ok = await _service.Delete(id);
-        if (!ok) return NotFound();
+        var removed = await _service.DeleteAsync(id);
+        if (!removed) return NotFound();
         return NoContent();
     }
 }

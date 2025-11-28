@@ -1,12 +1,12 @@
-using MinhaApi.Entities;
+using MinhaApi.DTOs.Users;
 
-namespace MinhaApi.Services;
+namespace MinhaApi.Application.Interfaces;
 
 public interface IUserService
 {
-    Task<List<User>> GetAllUsersAsync();
-    Task<User?> GetUserByIdAsync(Guid id);
-    Task<User> Create(UserDto dto);
-    Task<User?> Update(Guid id, UserDto dto);
-    Task<bool> Delete(Guid id);
+    Task<IEnumerable<UserResponseDto>> GetAllAsync();
+    Task<UserResponseDto?> GetByIdAsync(Guid id);
+    Task<UserResponseDto> CreateAsync(CreateUserDto dto);
+    Task<UserResponseDto?> UpdateAsync(Guid id, UpdateUserDto dto);
+    Task<bool> DeleteAsync(Guid id);
 }

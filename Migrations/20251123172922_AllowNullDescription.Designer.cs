@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinhaApi.Data;
 
@@ -10,16 +11,18 @@ using MinhaApi.Data;
 namespace MinhaApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251123172922_AllowNullDescription")]
+    partial class AllowNullDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("MinhaApi.Domain.Entities.Establishment", b =>
+            modelBuilder.Entity("MinhaApi.Entities.Establishments", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,6 +32,7 @@ namespace MinhaApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
@@ -40,13 +44,14 @@ namespace MinhaApi.Migrations
                     b.ToTable("Establishments");
                 });
 
-            modelBuilder.Entity("MinhaApi.Domain.Entities.Product", b =>
+            modelBuilder.Entity("MinhaApi.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
@@ -61,7 +66,7 @@ namespace MinhaApi.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("MinhaApi.Domain.Entities.User", b =>
+            modelBuilder.Entity("MinhaApi.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

@@ -1,8 +1,9 @@
-using MinhaApi.Entities;
-using MinhaApi.Data;
 using Microsoft.EntityFrameworkCore;
+using MinhaApi.Data;
+using MinhaApi.Domain.Entities;
+using MinhaApi.Infrastructure.Repositories.Interfaces;
 
-namespace MinhaApi.Repositories;
+namespace MinhaApi.Infrastructure.Repositories.Implementations;
 
 public class ProductRepository : IProductRepository
 {
@@ -13,38 +14,27 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public async Task<List<Product>> GetAllAsync()
-    {
-        return await _context.Products.ToListAsync();
-    }
+    public async Task<IEnumerable<Product>> GetAll()
+        => await _context.Products.AsNoTracking().ToListAsync();
 
-    public async Task<Product?> GetByIdAsync(int id)
-    {
-        Console.WriteLine($"Buscando produto com ID: {id}");
-        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-    }
+    public async Task<Product?> GetById(int id)
+        => await _context.Products.FindAsync(id);
 
-    public async Task<Product> AddAsync(Product product)
+    public async Task Add(Product product)
     {
-        _context.Products.Add(product);
+        await _context.Products.AddAsync(product);
         await _context.SaveChangesAsync();
-        return product;
     }
 
-    public async Task<Product> UpdateAsync(Product product)
+    public async Task Update(Product product)
     {
         _context.Products.Update(product);
         await _context.SaveChangesAsync();
-        return product;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task Delete(Product product)
     {
-        var product = await GetByIdAsync(id);
-        if (product == null) return false;
-
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
-        return true;
     }
 }
