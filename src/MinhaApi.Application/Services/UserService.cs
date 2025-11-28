@@ -30,13 +30,6 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(user);
     }
 
-    public async Task<UserResponseDto> CreateAsync(CreateUserDto dto)
-    {
-        var entity = _mapper.Map<User>(dto);
-        await _repo.AddAsync(entity);
-        return _mapper.Map<UserResponseDto>(entity);
-    }
-
     public async Task<UserResponseDto?> UpdateAsync(Guid id, UpdateUserDto dto)
     {
         var user = await _repo.GetByIdAsync(id);
