@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+
 using MinhaApi.Data;
 using MinhaApi.Domain.Entities;
 using MinhaApi.Infrastructure.Repositories.Interfaces;

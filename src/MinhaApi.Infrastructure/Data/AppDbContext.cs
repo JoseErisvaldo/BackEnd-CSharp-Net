@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+
 using MinhaApi.Domain.Entities;
 
 namespace MinhaApi.Data;

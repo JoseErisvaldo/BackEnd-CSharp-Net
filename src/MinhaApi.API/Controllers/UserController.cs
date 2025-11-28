@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using MinhaApi.Application.Interfaces;
 using MinhaApi.DTOs.Users;
 

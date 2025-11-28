@@ -1,5 +1,5 @@
-using MinhaApi.DTOs.Auth;
 using MinhaApi.Domain.Entities;
+using MinhaApi.DTOs.Auth;
 using MinhaApi.DTOs.Users;
 
 namespace MinhaApi.Application.Interfaces;

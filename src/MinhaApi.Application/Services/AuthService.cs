@@ -1,14 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using MinhaApi.Application.Interfaces;
-using MinhaApi.Data;
-using MinhaApi.DTOs.Auth;
-using MinhaApi.Domain.Entities;
-using MinhaApi.DTOs.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
+using MinhaApi.Application.Interfaces;
+using MinhaApi.Data;
+using MinhaApi.Domain.Entities;
+using MinhaApi.DTOs.Auth;
+using MinhaApi.DTOs.Users;
 
 namespace MinhaApi.Application.Services;
 

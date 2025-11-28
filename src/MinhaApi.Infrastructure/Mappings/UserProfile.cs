@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using MinhaApi.Domain.Entities;
 using MinhaApi.DTOs.Users;
 

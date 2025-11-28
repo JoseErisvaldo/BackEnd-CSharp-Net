@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+
 using MinhaApi.Application.Interfaces;
 using MinhaApi.DTOs.Auth;
 

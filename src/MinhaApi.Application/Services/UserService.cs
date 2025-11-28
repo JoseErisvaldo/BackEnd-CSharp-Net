@@ -1,7 +1,8 @@
 using AutoMapper;
+
 using MinhaApi.Application.Interfaces;
-using MinhaApi.DTOs.Users;
 using MinhaApi.Domain.Entities;
+using MinhaApi.DTOs.Users;
 using MinhaApi.Infrastructure.Repositories.Interfaces;
 
 namespace MinhaApi.Application.Services;
