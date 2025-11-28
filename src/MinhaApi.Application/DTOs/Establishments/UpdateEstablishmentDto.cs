@@ -1,7 +1,6 @@
-namespace MinhaApi.DTOs;
+namespace MinhaApi.DTOs.Establishments;
 
-public class UpdateEstablishmentDto
-{
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-}
+public record UpdateEstablishmentDto(
+    string? Name,
+    string? Description
+);

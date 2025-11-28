@@ -1,50 +1,41 @@
-
-
 using Microsoft.EntityFrameworkCore;
+
 using MinhaApi.Data;
-using MinhaApi.Entities;
+using MinhaApi.Domain.Entities;
+using MinhaApi.Infrastructure.Repositories.Interfaces;
 
-namespace MinhaApi.Repositories;
+namespace MinhaApi.Infrastructure.Repositories.Implementations;
 
-public class EstablishmentsRepository : IEstablishmentRepository
+public class EstablishmentRepository : IEstablishmentRepository
 {
     private readonly AppDbContext _context;
-    public EstablishmentsRepository(AppDbContext context)
+
+    public EstablishmentRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    public async Task<List<Establishments>> GetAllAsync()
-    {
-        return await _context.Establishments.ToListAsync();
-    }
+    public async Task<List<Establishment>> GetAllAsync()
+        => await _context.Establishments.AsNoTracking().ToListAsync();
 
-    public async Task<Establishments?> GetByIdAsync(Guid id)
-    {
-        return await _context.Establishments.FirstOrDefaultAsync(byId => byId.Id == id);
-    }
+    public async Task<Establishment?> GetByIdAsync(Guid id)
+        => await _context.Establishments.FindAsync(id);
 
-    public async Task<Establishments> AddAsync(Establishments establishments)
+    public async Task AddAsync(Establishment establishment)
     {
-        _context.Establishments.Add(establishments);
+        await _context.Establishments.AddAsync(establishment);
         await _context.SaveChangesAsync();
-        return establishments;
     }
 
-    public async Task<Establishments> UpdateAsync(Establishments establishments)
+    public async Task UpdateAsync(Establishment establishment)
     {
-        _context.Establishments.Update(establishments);
+        _context.Establishments.Update(establishment);
         await _context.SaveChangesAsync();
-        return establishments;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Establishment establishment)
     {
-        var establishments = await GetByIdAsync(id);
-        if (establishments == null) return false;
-
-        _context.Establishments.Remove(establishments);
+        _context.Establishments.Remove(establishment);
         await _context.SaveChangesAsync();
-        return true;
     }
 }

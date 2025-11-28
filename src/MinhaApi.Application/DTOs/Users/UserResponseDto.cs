@@ -1,9 +1,10 @@
-public class UserResponseDto
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string? Whatsapp { get; set; }
-    public string Role { get; set; } = "client";
-    public DateTime CreatedAt { get; set; }
-}
+namespace MinhaApi.DTOs.Users;
+
+public record UserResponseDto(
+    Guid Id,
+    string Name,
+    string Email,
+    string? Whatsapp,
+    string Role,
+    DateTime CreatedAt
+);

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using MinhaApi.Entities;
+
+using MinhaApi.Domain.Entities;
 
 namespace MinhaApi.Data;
 
@@ -9,7 +10,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<Establishments> Establishments { get; set; } = null!;
+    public DbSet<Establishment> Establishments { get; set; } = null!;
 
 
 }

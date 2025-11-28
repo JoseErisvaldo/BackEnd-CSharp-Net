@@ -1,39 +1,57 @@
-
 using AutoMapper;
-using MinhaApi.DTOs;
-using MinhaApi.Entities;
-using MinhaApi.Repositories;
 
-namespace MinhaApi.Services;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.Domain.Entities;
+using MinhaApi.DTOs.Establishments;
+using MinhaApi.Infrastructure.Repositories.Interfaces;
 
-public class EstablishmentsService : IEstablishmentsService
+namespace MinhaApi.Application.Services;
+
+public class EstablishmentService : IEstablishmentService
 {
     private readonly IEstablishmentRepository _repo;
     private readonly IMapper _mapper;
 
-    public EstablishmentsService(IEstablishmentRepository repo, IMapper mapper)
+    public EstablishmentService(IEstablishmentRepository repo, IMapper mapper)
     {
         _repo = repo;
         _mapper = mapper;
     }
 
-    public Task<List<Establishments>> GetAll() => _repo.GetAllAsync();
-    public Task<Establishments?> GetById(Guid id) => _repo.GetByIdAsync(id);
-
-    public async Task<Establishments> Create(CreateEstablishmentDto dto)
+    public async Task<IEnumerable<EstablishmentResponseDto>> GetAllAsync()
     {
-        var establishment = _mapper.Map<Establishments>(dto);
-        return await _repo.AddAsync(establishment);
+        var entities = await _repo.GetAllAsync();
+        return _mapper.Map<IEnumerable<EstablishmentResponseDto>>(entities);
     }
 
-    public async Task<Establishments?> Update(Guid id, UpdateEstablishmentDto dtos)
+    public async Task<EstablishmentResponseDto?> GetByIdAsync(Guid id)
     {
-        var establishment = await _repo.GetByIdAsync(id);
-        if (establishment == null) return null;
-
-        _mapper.Map(dtos, establishment);
-        return await _repo.UpdateAsync(establishment);
+        var entity = await _repo.GetByIdAsync(id);
+        if (entity is null) return null;
+        return _mapper.Map<EstablishmentResponseDto>(entity);
     }
 
-    public Task<bool> Delete(Guid id) => _repo.DeleteAsync(id);
+    public async Task<EstablishmentResponseDto> CreateAsync(CreateEstablishmentDto dto)
+    {
+        var entity = _mapper.Map<Establishment>(dto);
+        await _repo.AddAsync(entity);
+        return _mapper.Map<EstablishmentResponseDto>(entity);
+    }
+
+    public async Task<EstablishmentResponseDto?> UpdateAsync(Guid id, UpdateEstablishmentDto dto)
+    {
+        var entity = await _repo.GetByIdAsync(id);
+        if (entity is null) return null;
+        _mapper.Map(dto, entity);
+        await _repo.UpdateAsync(entity);
+        return _mapper.Map<EstablishmentResponseDto>(entity);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var entity = await _repo.GetByIdAsync(id);
+        if (entity is null) return false;
+        await _repo.DeleteAsync(entity);
+        return true;
+    }
 }

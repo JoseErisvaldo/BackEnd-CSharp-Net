@@ -1,59 +1,59 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MinhaApi.Entities;
-using MinhaApi.Services;
 
-namespace MinhaApi.Controllers;
+using MinhaApi.Application.Interfaces;
+using MinhaApi.DTOs.Users;
+
+namespace MinhaApi.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/user")]
+[Route("api/users")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _service;
-    private readonly IMapper _mapper;
 
-    public UserController(IUserService service, IMapper mapper)
+    public UserController(IUserService service)
     {
         _service = service;
-        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<UserResponseDto>>> GetAll()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAll()
     {
-        var users = await _service.GetAllUsersAsync();
-        var usersDto = _mapper.Map<List<UserResponseDto>>(users);
-        return Ok(usersDto);
+        var users = await _service.GetAllAsync();
+        return Ok(users);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponseDto>> GetById(Guid id)
     {
-        var user = await _service.GetUserByIdAsync(id);
-        if (user == null) return NotFound();
-
-        var userDto = _mapper.Map<UserResponseDto>(user);
-        return Ok(userDto);
+        var user = await _service.GetByIdAsync(id);
+        if (user is null) return NotFound();
+        return Ok(user);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<UserResponseDto>> Update(Guid id, UserDto dto)
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserResponseDto>> Update(Guid id, [FromBody] UpdateUserDto dto)
     {
-        var user = await _service.Update(id, dto);
-        if (user == null) return NotFound();
-
-        var userDto = _mapper.Map<UserResponseDto>(user);
-        return Ok(userDto);
+        var updated = await _service.UpdateAsync(id, dto);
+        if (updated is null) return NotFound();
+        return Ok(updated);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var ok = await _service.Delete(id);
-        if (!ok) return NotFound();
-
+        var removed = await _service.DeleteAsync(id);
+        if (!removed) return NotFound();
         return NoContent();
     }
 }

@@ -1,13 +1,12 @@
-using MinhaApi.DTOs;
-using MinhaApi.Entities;
+using MinhaApi.DTOs.Products;
 
-namespace MinhaApi.Services;
+namespace MinhaApi.Application.Interfaces;
 
 public interface IProductService
 {
-    Task<List<Product>> GetAll();
-    Task<Product?> GetById(int id);
-    Task<Product> Create(ProductDto dto);
-    Task<Product?> Update(int id, ProductDto dto);
+    Task<IEnumerable<ProductResponseDto>> GetAll();
+    Task<ProductResponseDto?> GetById(int id);
+    Task<ProductResponseDto> Create(CreateProductDto dto);
+    Task<ProductResponseDto?> Update(int id, UpdateProductDto dto);
     Task<bool> Delete(int id);
 }

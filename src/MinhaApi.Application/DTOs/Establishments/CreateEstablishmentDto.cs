@@ -1,7 +1,11 @@
-namespace MinhaApi.DTOs;
+using System.ComponentModel.DataAnnotations;
 
-public class CreateEstablishmentDto
-{
-    public required string Name { get; set; }
-    public string? Description { get; set; }
-}
+namespace MinhaApi.DTOs.Establishments;
+
+public record CreateEstablishmentDto(
+    [Required(ErrorMessage = "O nome é obrigatório")]
+    [StringLength(200, ErrorMessage = "O nome deve ter no máximo 200 caracteres")]
+    string Name,
+    [StringLength(1000, ErrorMessage = "Descrição muito longa")]
+    string? Description
+);
